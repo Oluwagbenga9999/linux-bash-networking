@@ -1,0 +1,7 @@
+services:
+  app:
+    build: .
+    image: devops-tool
+    container_name: devops-tool
+    entrypoint: ["/bin/bash", "/app/app.sh"]
+    command: ["help"]

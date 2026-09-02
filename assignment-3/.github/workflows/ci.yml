@@ -1,0 +1,39 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set executable permissions
+        run: chmod +x app/*.sh scripts/*.sh tests/*.sh
+      - name: Run lint
+        run: ./scripts/lint.sh
+
+  test:
+    needs: validate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set executable permissions
+        run: chmod +x app/*.sh scripts/*.sh tests/*.sh
+      - name: Run tests
+        run: ./tests/test.sh
+
+  docker:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build Docker image
+        run: docker build -t devops-tool .
+      - name: Smoke test Docker image
+        run: |
+          docker run --rm devops-tool help >/tmp/help.txt
+          docker run --rm devops-tool system-info >/tmp/system.txt
+          test -s /tmp/help.txt
+          test -s /tmp/system.txt
