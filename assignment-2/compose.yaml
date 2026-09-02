@@ -1,0 +1,7 @@
+services:
+  diagnostic:
+    build: .
+    image: diagnostic-tool
+    container_name: diagnostic-tool
+    entrypoint: ["/bin/bash", "/app/diagnostic.sh"]
+    command: ["help"]
